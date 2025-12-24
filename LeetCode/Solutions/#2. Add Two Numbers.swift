@@ -2,16 +2,14 @@
 //  #2. Add Two Numbers.swift
 //  LeetCode
 //
-//  Created by ZverikRS on 23.05.2025.
+//  Created by ZverikRS on 21.12.2025.
 //
 
-import Foundation
-
 /*
- You are given two non-empty linked lists representing two non-negative integers.
- The digits are stored in reverse order, and each of their nodes contains a single digit.
- Add the two numbers and return the sum as a linked list.
- You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+ Вам даны два непустых связанных списка, представляющих два неотрицательных целых числа.
+ Цифры хранятся в обратном порядке, и каждый из их узлов содержит одну цифру.
+ Сложите два числа и верните сумму в виде связанного списка.
+ Вы можете предположить, что эти два числа не содержат никакого начального нуля, за исключением самого числа 0.
  
  Example 1:
  Input: l1 = [2, 4, 3], l2 = [5, 6, 4]
@@ -27,82 +25,74 @@ import Foundation
  Output: [8, 9, 9, 9, 0, 0, 0, 1]
  */
 
-class Solution_2: CustomStringConvertible {
-    var description: String {
-        let l1: ListNode? = .convert(array: [9, 9, 9, 9, 9, 9, 9])
-        let l2: ListNode? = .convert(array: [9, 9, 9, 9])
-        
-        let result = addTwoNumbers(l1, l2)
-        guard let result else {
-            return "[]"
-        }
-        
-        return "[\(result.description)]"
-    }
-    
-    func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
-        let array1: Array<Int> = .init(array(listNode: l1).reversed())
-        let array2: Array<Int> = .init(array(listNode: l2).reversed())
-        
-        let sum1 = Int(array1.map { "\($0)" }.joined()) ?? 0
-        let sum2 = Int(array2.map { "\($0)" }.joined()) ?? 0
-        let count = sum1 + sum2
-        let array: Array<Int> = .init(count.description.map { Int("\($0)") ?? 0 }.reversed())
-        return .convert(array: array)
-    }
-    
-    // MARK: - private methods
-    private func array(listNode: ListNode?) -> Array<Int> {
-        guard let listNode else { return [] }
-        var array: Array<Int> = .init()
-        var _listNode: ListNode = listNode
-        array.append(listNode.val)
-        
-        while let next = _listNode.next {
-            array.append(next.val)
-            _listNode = next
-        }
-        
-        return array
+import Foundation
+
+struct AddTwoNumbers: LeetCodeSolutionRunProtocol {
+    func run() {
+        print("#2: Add Two Numbers: [\(addTwoNumbers(.init(array:  [2, 4, 3]), .init(array:  [5, 6, 4]))?.description ?? "")]")
+        print("#2: Add Two Numbers: [\(addTwoNumbers(.init(array:  [0]), .init(array:  [0]))?.description ?? "")]")
+        print("#2: Add Two Numbers: [\(addTwoNumbers(.init(array:  [9, 9, 9, 9, 9, 9, 9]), .init(array:  [9, 9, 9, 9]))?.description ?? "")]")
+        print("_________________________\n")
     }
 }
 
-extension Solution_2 {
-    class ListNode: CustomStringConvertible {
-        public var description: String {
-            guard let next else {
-                return "\(val)"
-            }
-            
-            return "\(val), \(next.description)"
-        }
-        
+// MARK: - LeetCode
+private extension AddTwoNumbers {
+    class ListNode {
         public var val: Int
         public var next: ListNode?
         public init() { self.val = 0; self.next = nil; }
         public init(_ val: Int) { self.val = val; self.next = nil; }
         public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
     }
-}
-
-extension Solution_2.ListNode {
-    static func convert(array: [Int]) -> Solution_2.ListNode? {
-        var listNode: Solution_2.ListNode?
-        guard array.count > 0 else { return nil }
-        var currentlistNode: Solution_2.ListNode?
-        
-        for i in 0 ..< array.count {
-            if i == 0 {
-                listNode = .init(array[i])
-                
-            } else {
-                let _currentlistNode = currentlistNode ?? listNode
-                currentlistNode = .init(array[i])
-                _currentlistNode?.next = currentlistNode
-            }
+    
+    func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+        addTwoNumbers(correctedInt: nil, l1, l2)
+    }
+    
+    private func addTwoNumbers(correctedInt: Int?, _ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+        var val: Int? = correctedInt
+        if let l1, let l2 {
+            val = (val ?? 0) + l1.val + l2.val
+            
+        } else if let l1 {
+            val = (val ?? 0) + l1.val
+            
+        } else if let l2 {
+            val = (val ?? 0) + l2.val
         }
         
-        return listNode
+        guard let val else { return nil }
+        let count = val / 10
+        let correctedInt = count > 0 ? count : nil
+        let newVal = val - count * 10
+        
+        return .init(newVal, addTwoNumbers(correctedInt: correctedInt, l1?.next, l2?.next))
     }
+}
 
+// MARK: - calculated properties
+private extension AddTwoNumbers.ListNode {
+    var description: String {
+        var array: [String] = ["\(val)"]
+        if let next {
+            array.append(next.description)
+        }
+        return array.joined(separator: ", ")
+    }
+    
+    convenience init?(array: [Int]) {
+        var array = array
+        guard !array.isEmpty else {
+            return nil
+        }
+        
+        self.init(array.removeFirst())
+        var currentListNode: AddTwoNumbers.ListNode = self
+        for element in array {
+            let newNode: AddTwoNumbers.ListNode = .init(element)
+            currentListNode.next = newNode
+            currentListNode = newNode
+        }
+    }
 }

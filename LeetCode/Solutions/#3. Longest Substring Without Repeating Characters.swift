@@ -2,18 +2,16 @@
 //  #3. Longest Substring Without Repeating Characters.swift
 //  LeetCode
 //
-//  Created by ZverikRS on 23.05.2025.
+//  Created by ZverikRS on 21.12.2025.
 //
 
-import Foundation
-
 /*
- Given a string s, find the length of the longest substring without duplicate characters.
+ Учитывая строку s, найдите длину самой длинной подстроки без повторяющихся символов.
  
  Example 1:
  Input: s = "abcabcbb"
  Output: 3
- Explanation: The answer is "abc", with the length of 3.
+ Explanation: The answer is "abc", with the length of 3. Note that "bca" and "cab" are also correct answers.
  
  Example 2:
  Input: s = "bbbbb"
@@ -27,32 +25,38 @@ import Foundation
  Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
  */
 
-class Solution_3: CustomStringConvertible {
-    var description: String {
-        let number = lengthOfLongestSubstring("abcabcbb")
-        return "\(number)"
+import Foundation
+
+struct LengthOfLongestSubstring: LeetCodeSolutionRunProtocol {
+    func run() {
+        print("#3: Longest Substring Without Repeating Characters: \(lengthOfLongestSubstring("abcabcbb"))")
+        print("#3: Longest Substring Without Repeating Characters: \(lengthOfLongestSubstring("bbbbb"))")
+        print("#3: Longest Substring Without Repeating Characters: \(lengthOfLongestSubstring("pwwkew"))")
+        print("_________________________\n")
     }
-    
+}
+
+// MARK: - LeetCode
+private extension LengthOfLongestSubstring {
     func lengthOfLongestSubstring(_ s: String) -> Int {
-        var chars = Set<Character>() // Множество для хранения уникальных символов
-        var left = 0 // Левый указатель окна
-        var maxLength = 0 // Максимальная длина подстроки
+        guard !s.isEmpty else { return 0 }
         
-        // Преобразуем строку в массив символов для удобства
-        let sArray = Array(s)
+        var substring: String = ""
+        var index: String.Index = s.startIndex
         
-        for right in 0 ..< sArray.count {
-            // Пока текущий символ уже есть в множестве, сдвигаем левый указатель
-            while chars.contains(sArray[right]) {
-                chars.remove(sArray[left])
-                left += 1
+        while index < s.endIndex {
+            let element = String(s[index])
+            
+            if !substring.contains(element) {
+                substring.append(element)
+                index = s.index(after: index)
+                
+            } else {
+                break
             }
-            // Добавляем текущий символ
-            chars.insert(sArray[right])
-            // Обновляем максимальную длину
-            maxLength = max(maxLength, right - left + 1)
         }
         
-        return maxLength
+        let nextText: String = .init(s.dropFirst())
+        return max(substring.count, lengthOfLongestSubstring(nextText))
     }
 }

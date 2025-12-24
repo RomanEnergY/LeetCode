@@ -2,16 +2,13 @@
 //  #1. Two Sum.swift
 //  LeetCode
 //
-//  Created by ZverikRS on 23.05.2025.
+//  Created by ZverikRS on 21.12.2025.
 //
 
-import Foundation
-
 /*
- Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
- You may assume that each input would have exactly one solution, and you may not use the same element twice.
- 
- You can return the answer in any order.
+ Учитывая массив целых чисел nums и целочисленную цель, верните индексы двух чисел таким образом, чтобы они в сумме давали цель.
+ Вы можете предположить, что каждый вход будет иметь ровно одно решение, и вы не сможете использовать один и тот же элемент дважды.
+ Вы можете вернуть ответ в любом порядке.
  
  Example 1:
  Input: nums = [2, 7, 11, 15], target = 9
@@ -27,25 +24,29 @@ import Foundation
  Output: [0, 1]
  */
 
-class Solution_1: CustomStringConvertible {
-    var description: String {
-        "\(twoSum([2, 7, 11, 15], 9))"
+import Foundation
+
+struct TwoSum: LeetCodeSolutionRunProtocol {
+    func run() {
+        print("#1: Two Sum: \(twoSum([2, 7, 11, 15], 9))")
+        print("#1: Two Sum: \(twoSum([3, 2, 4], 6))")
+        print("#1: Two Sum: \(twoSum([3, 3], 6))")
+        print("_________________________\n")
     }
-    
+}
+
+// MARK: - LeetCode
+private extension TwoSum {
     func twoSum(_ nums: [Int], _ target: Int) -> [Int] {
-        var dictionary: Dictionary<Int, Int> = .init()
-        for i in 0 ..< nums.count {
-            dictionary[nums[i]] = i
-        }
-        
-        for i in 0 ..< nums.count {
-            let a = target - nums[i]
-            if let b = dictionary[a],
-               i != b {
-                return [i, b]
-            }
-        }
-        
-        return []
-    }
+       var map: Dictionary<Int, Int> = [:]
+       for (index, value) in nums.enumerated() {
+           let a = target - value
+           if let b = map[a] {
+               return [b, index]
+           }
+           map[value] = index
+       }
+       
+       return []
+   }
 }

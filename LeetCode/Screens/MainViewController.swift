@@ -23,7 +23,13 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let solution: Solution_3 = .init()
-        print(solution.description)
+        let array: [LeetCodeSolutionRunProtocol] = [
+            TwoSum(),
+            AddTwoNumbers(),
+            LengthOfLongestSubstring(),
+            FindMedianSortedArrays()
+        ]
+        
+        array.forEach { $0.run() }
     }
 }
